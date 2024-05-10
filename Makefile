@@ -1,10 +1,10 @@
 #~ Args
-app=./vuln_app
 dflags=$(DFLAGS)
 
-#~ Local
-BLD=./build
-SRC=./src
+#~ Settings
+app=vuln_app
+BLD=objects
+SRC=src
 comm=comm
 dma=dma
 main=main
@@ -26,8 +26,10 @@ $(BLD)/lib$(dma).so:$(BLD)/$(dma).o
 	gcc -shared $< -o $@
 
 vuln_app:$(SRC)/$(main).c $(BLD)/lib$(comm).so $(BLD)/lib$(dma).so $(flags_file) $(SRC)/$(common_header)
-	gcc $(dflags) $< -o $(app) -L$(BLD) -l$(comm) -l$(dma) -Wl,-rpath=./build
+	echo $(shell pwd) 
+	gcc $(dflags) $< -o $(app) -L$(BLD) -l$(comm) -l$(dma) -Wl,-rpath=$(shell pwd)/$(BLD)
 
 .PHONY:clean
 clean:
-	rm -rf ./build/*
+	rm -rf $(BLD)/*
+	rm -rf $(app)

@@ -42,13 +42,22 @@ void finish_CAN(int sock){
 int nbytes;
 struct can_frame frame;
 void get_data_CAN(int sock, char *buf){
-	nbytes = read(sock, &frame, sizeof(struct can_frame));
-	if (nbytes < 0) {
-		perror("Read");
-		exit(255);
+	while (1){
+		nbytes = read(sock, &frame, sizeof(struct can_frame));
+		if (nbytes < 0) {
+			perror("Read error :(");
+			continue;
+		}
+		printf ("Recvd packet with ID 0x%03X len: %d\n", frame.can_id, frame.can_dlc);
+		//CAN does not regulate 8 bytes data, but if you insist
+		// if (frame.can_dlc != 8) {
+		// 	perror("Small data frame :( ");
+		// 	continue;
+		// }
+		memset(buf,0,8);
+		memcpy(buf,frame.data,8);
+		break;
 	}
-	printf ("Recvd packet with ID 0x%03X len: %d\n", frame.can_id, frame.can_dlc);
-	memcpy(buf,frame.data,8);
 }
 
 #pragma endregion
@@ -57,6 +66,7 @@ void get_data_CAN(int sock, char *buf){
 #pragma region STDIN
 
 void get_data_STDIN(char *buf){
+	memset(buf,0,8);
     scanf("%llx",(long long *)buf);
 }
 

@@ -7,7 +7,7 @@
 static int v_parse_stack_flow(char *data, comm *comm_ds){
     //Parse data
 	int size = (data[0]&0xff);
-	if (size > 20){
+	if (size > 18){
         printf ("Message of size %u is too big :(\n", size);
         return -1;
     }

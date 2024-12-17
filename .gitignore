@@ -1,2 +1,4 @@
 vuln_app
-objects/**
+*.o
+env.*
+*.so

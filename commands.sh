@@ -56,22 +56,22 @@ _v_send_input__input_data__channel(){
 
 v_run(){
     (
+        #~ Check environment
+        if [[ "$(ifconfig $CAN_IFACE 2>&1)" == *"Device not found"* ]];then
+                echo "Create"
+                sudo ip link add dev $CAN_IFACE type vcan
+                sudo ifconfig $CAN_IFACE up
+                ifconfig $CAN_IFACE
+        fi
+
         set -ueE
     
         trap "tmux kill-session -t $TMUX_SES; echo 'Please v_run again'" ERR
 
         cd "$V"
-        
-        #~ Check environment
-        if [[ "$(ifconfig $CAN_IFACE 2>&1)" == *"Device not found"* ]];then
-            echo "Create"
-            sudo ip link add dev $CAN_IFACE type vcan
-            sudo ifconfig $CAN_IFACE up
-            ifconfig $CAN_IFACE
-        fi
 
         #~ Init Tmux
-        tmux new -d -s "$TMUX_SES"
+        tmux -f "$V/tmux.conf" new -d -s "$TMUX_SES"
         tmux split-window -l10%
 
 
